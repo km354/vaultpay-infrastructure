@@ -14,9 +14,18 @@ resource "aws_vpc" "main" {
     }
 }
 
+resource "aws_internet_gateway" "main" {
+    vpc_id = aws_vpc.main.id
+
+    tags = {
+        Name = "vaultpay-igw"
+        Project = "VaultPay"
+    }
+}
+
 resource "aws_subnet" "public_a" {
     vpc_id = aws_vpc.main.id
-    cidr_block = var.public_subnet_cidr[0]
+    cidr_block = var.public_subnet_cidrs[0]
     availability_zone = "us-east-1a"
 
     tags = {
@@ -29,26 +38,66 @@ resource "aws_subnet" "public_a" {
 
 resource "aws_subnet" "public_b" {
     vpc_id = aws_vpc.main.id
-    cidr_block = var.public_subnet_cidr[1]
+    cidr_block = var.public_subnet_cidrs[1]
     availability_zone = "us-east-1b"
 
      tags = {
         Name = "vaultpay-public-subnet-b"
         Project = "VaultPay"
     }
-    
+
 }
 
-resource "aws_internet_gateway" "main" {
+
+resource "aws_subnet" "app_a" {
     vpc_id = aws_vpc.main.id
+    cidr_block = var.app_subnet_cidrs[0]
+    availability_zone = "us-east-1a"
 
     tags = {
-        Name = "vaultpay-igw"
+        Name = "vaultpay-app-subnet-a"
         Project = "VaultPay"
     }
+
 }
 
-resource "aws_route_table" "public_subnet_rt" {
+resource "aws_subnet" "app_b" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = var.app_subnet_cidrs[1]
+    availability_zone = "us-east-1b"
+
+    tags = {
+        Name = "vaultpay-app-subnet-b"
+        Project = "VaultPay"
+    }
+
+}
+
+resource "aws_subnet" "db_a" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = var.database_subnet_cidrs[0]
+    availability_zone = "us-east-1a"
+
+    tags = {
+        Name = "vaultpay-database-subnet-a"
+        Project = "VaultPay"
+    }
+
+}
+
+resource "aws_subnet" "db_b" {
+    vpc_id = aws_vpc.main.id
+    cidr_block = var.database_subnet_cidrs[1]
+    availability_zone = "us-east-1b"
+
+    tags = {
+        Name = "vaultpay-database-subnet-b"
+        Project = "VaultPay"
+    }
+
+}
+
+resource "aws_route_table" "public_rt" {
     vpc_id = aws_vpc.main.id
 
     route {
@@ -62,14 +111,52 @@ resource "aws_route_table" "public_subnet_rt" {
     }
 }
 
-resource "aws_route_table_association" "rt_association_pb_a" {
-    route_table_id = aws_route_table.public_subnet_rt.id
+resource "aws_route_table" "app_rt" {
+    vpc_id = aws_vpc.main.id
+
+    tags = {
+        Name = "vaultpay-app-rt"
+        Project = "VaultPay"
+    }
+}
+
+resource "aws_route_table" "db_rt" {
+    vpc_id = aws_vpc.main.id
+
+    tags = {
+        Name = "vaultpay-database-rt"
+        Project = "VaultPay"
+    }
+}
+
+resource "aws_route_table_association" "public_rt_a" {
+    route_table_id = aws_route_table.public_rt.id
     subnet_id = aws_subnet.public_a.id
 
 }
 
-resource "aws_route_table_association" "rt_association_pb_b" {
-    route_table_id = aws_route_table.public_subnet_rt.id
+resource "aws_route_table_association" "public_rt_b" {
+    route_table_id = aws_route_table.public_rt.id
     subnet_id = aws_subnet.public_b.id
 
+}
+
+resource "aws_route_table_association" "app_rt_a" {
+    route_table_id = aws_route_table.app_rt.id
+    subnet_id = aws_subnet.app_a.id
+}
+
+resource "aws_route_table_association" "app_rt_b" {
+    route_table_id = aws_route_table.app_rt.id
+    subnet_id = aws_subnet.app_b.id
+}
+
+resource "aws_route_table_association" "db_rt_a" {
+    route_table_id = aws_route_table.db_rt.id
+    subnet_id = aws_subnet.db_a.id
+}
+
+resource "aws_route_table_association" "db_rt_b" {
+    route_table_id = aws_route_table.db_rt.id
+    subnet_id = aws_subnet.db_b.id
 }
