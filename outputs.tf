@@ -17,3 +17,8 @@ output "db_private_subnet_ids" {
     description = "all of the db subnet ids"
     value = module.vpc.db_private_subnet_ids
 }
+
+output "alb_dns_name" {
+    description = "the dns name of the alb"
+    value = aws_lb.vaultpay_alb.dns_name
+}
