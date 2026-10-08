@@ -46,19 +46,29 @@ variable "backup_retention_period" {
 variable "deletion_protection" {
     description = "Whether the RDS instance can be deleted or not"
     type = bool
+    default = true
 }
 
 variable "skip_final_snapshot" {
     description = "Whether you can skip or not skip the final snapshot"
     type = bool
+    default = false
 }
 
 variable "force_delete_ecr" {
     description = "Whether or not to enforce delete protection for ecr"
     type = bool
+    default = false
 }
 
 variable "force_delete_s3" {
     description = "Whether or not to enforce delete protection for s3"
     type = bool
+    default = false
+}
+
+variable "image_tag" {
+  description = "Container image tag to deploy"
+  type        = string
+  default     = "latest"
 }

@@ -22,3 +22,8 @@ output "alb_dns_name" {
     description = "the dns name of the alb"
     value = aws_lb.vaultpay_alb.dns_name
 }
+
+output "account_id" {
+    description = "the id of the account associated"
+    value = data.aws_caller_identity.current.account_id
+}
