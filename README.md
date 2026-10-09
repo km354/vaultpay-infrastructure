@@ -1,1 +1,0 @@
-# vaultpay-infrastructure hello world
